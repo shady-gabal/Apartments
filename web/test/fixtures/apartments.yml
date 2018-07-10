@@ -1,0 +1,29 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  floor_area_size: MyString
+  decimal,: MyString
+  price_per_month: MyString
+  decimal,: MyString
+  number_of_rooms: MyString
+  integer,: MyString
+  lat: MyString
+  decimal,: MyString
+  lon: MyString
+  decimal: MyString
+
+two:
+  name: MyString
+  description: MyText
+  floor_area_size: MyString
+  decimal,: MyString
+  price_per_month: MyString
+  decimal,: MyString
+  number_of_rooms: MyString
+  integer,: MyString
+  lat: MyString
+  decimal,: MyString
+  lon: MyString
+  decimal: MyString
