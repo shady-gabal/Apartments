@@ -7,6 +7,9 @@ class User < ActiveRecord::Base
 
   has_many :apartments, foreign_key: 'realtor_id'
 
+  validates :name, presence: true, allow_blank: false
+  validates :role, presence: true, allow_blank: false
+
   module Role
     CLIENT = "client"
     REALTOR = "realtor"
@@ -23,5 +26,9 @@ class User < ActiveRecord::Base
 
   def client?
     self.role === Role::CLIENT
+  end
+
+  def to_json
+    {name: self.name, email: self.provider === "email" ? self.uid : "", role: self.role}
   end
 end
