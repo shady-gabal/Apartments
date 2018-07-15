@@ -29,7 +29,7 @@ module Api::V1
         return {permissions: "none"}
       end
 
-      users = User.all.where.not(:id => ids_to_ignore)
+      users = User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => ids_to_ignore)
 
       data = {realtors: [], clients: [], permissions: "crud"}
 
