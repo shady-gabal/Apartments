@@ -1,19 +1,7 @@
 module Api::V1
   class ApartmentsController < ApplicationController
-    before_action :set_apartment, only: [:show, :update, :destroy]
-    # before_action :authenticate_user!, except: []
-
-    # GET /apartments
-    def index
-      @apartments = Apartment.all
-
-      render json: @apartments
-    end
-
-    # GET /apartments/1
-    def show
-      render json: @apartment
-    end
+    before_action :set_apartment, only: [:update, :destroy]
+    before_action :authenticate_user!
 
     # POST /apartments
     def create
@@ -29,15 +17,19 @@ module Api::V1
     # PATCH/PUT /apartments/1
     def update
       if @apartment.update(apartment_params)
-        render json: @apartment
+        render json: @apartment.to_json
       else
-        render json: @apartment.errors, status: :unprocessable_entity
+        render json: {errors: @apartment.errors.full_messages}, status: :unprocessable_entity
       end
     end
 
     # DELETE /apartments/1
     def destroy
-      @apartment.destroy
+      if @apartment.destroy
+        render json:{}
+      else
+        render json:{errors: @apartment.errors.full_messages}, status: :unprocessable_entity
+      end
     end
 
     private
