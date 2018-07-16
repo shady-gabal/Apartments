@@ -1,11 +1,11 @@
 module Api::V1
   class UsersController < ApplicationController
-    before_action :set_user, only: [:update, :destroy]
+    load_and_authorize_resource param_method: :user_params
     before_action :authenticate_user!, except: [:create]
 
     def index
       if !current_user.admin?
-        return {permissions: "none"}
+        render json:{permissions: "none"}
       end
 
       users = User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => (params[:excluded_ids] || []))
@@ -42,12 +42,8 @@ module Api::V1
     
     private
 
-    def set_user
-      @user = User.find(params[:id])
-    end
-    
     def user_params
-      params.require(:user).permit(:email, :password, :name)
+      params.require(:user).permit(:email, :password, :name, :role)
     end
   end
 end

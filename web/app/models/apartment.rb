@@ -6,8 +6,8 @@ class Apartment < ApplicationRecord
   validates :floor_area_size, presence: true
   validates :price_per_month, presence: true
   validates :number_of_rooms, presence: true
-  validates :lat, presence: true
-  validates :lon, presence: true
+  validates :lat, presence: true, :inclusion => -90..90
+  validates :lon, presence: true, :inclusion => -180..180
 
   def to_json
     {
