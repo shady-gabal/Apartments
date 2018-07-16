@@ -3,6 +3,15 @@ module Api::V1
     before_action :set_apartment, only: [:update, :destroy]
     before_action :authenticate_user!
 
+    def index
+      apartments = Apartment.where.not(:id => (params[:excluded_ids] || []))
+      if current_user.client?
+        apartments = apartments.where(:rented => false)
+      end
+
+      render json: {data: apartments.map {|a| a.to_json}, permissions: current_user.client? ? "view" : "crud"}
+    end
+
     # POST /apartments
     def create
       @apartment = Apartment.new(apartment_params)
@@ -10,7 +19,7 @@ module Api::V1
       if @apartment.save
         render json: @apartment, status: :created, location: @apartment
       else
-        render json: @apartment.errors, status: :unprocessable_entity
+        render json:{errors: @apartment.errors.full_messages}, status: :unprocessable_entity
       end
     end
 

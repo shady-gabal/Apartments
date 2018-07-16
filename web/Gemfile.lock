@@ -139,7 +139,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bcrypt (= 3.1.12)
   byebug
   cancancan (~> 2.0)
   devise_token_auth

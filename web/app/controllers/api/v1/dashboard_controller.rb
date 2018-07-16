@@ -31,17 +31,7 @@ module Api::V1
 
       users = User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => ids_to_ignore)
 
-      data = {realtors: [], clients: [], permissions: "crud"}
-
-      users.each do |u|
-        if u.realtor?
-          data[:realtors] << u
-        elsif u.client?
-          data[:clients] << u
-        end
-      end
-
-      return data
+      return {users: users, permissions: "crud"}
     end
   end
 end
