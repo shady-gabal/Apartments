@@ -1,0 +1,6 @@
+framework module Pods_Apartments {
+  umbrella header "Pods-Apartments-umbrella.h"
+
+  export *
+  module * { export * }
+}
