@@ -1,6 +1,7 @@
 PODS:
   - Alamofire (4.7.3)
   - AZTableView (0.0.3)
+  - DOPDropDownMenu (0.1.1)
   - Eureka (4.2.0)
   - Strongbox (0.5.1)
   - SwiftyJSON (4.1.0)
@@ -8,7 +9,8 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 4.7)
   - AZTableView (= 0.0.3)
-  - Eureka
+  - DOPDropDownMenu
+  - Eureka (= 4.2.0)
   - Strongbox (~> 0.5.1)
   - SwiftyJSON (~> 4.1.0)
 
@@ -16,6 +18,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - AZTableView
+    - DOPDropDownMenu
     - Eureka
     - Strongbox
     - SwiftyJSON
@@ -23,10 +26,11 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   AZTableView: a88db527c6183cf8c08ed74b523568c6304c7122
+  DOPDropDownMenu: 92edceaee75cd8703d9891b4844d48c0d0a2ae54
   Eureka: 0748c7bbb2560130e43c7bfa83e99c98854a1f42
   Strongbox: f49a3922237c1dcde2cabbb882edd37d2aa75a23
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
 
-PODFILE CHECKSUM: 3ee6b2a999571cc4b27642075871a04859625988
+PODFILE CHECKSUM: cfe9d72856676cc0d0a0ad4fa64e1b38e679f864
 
 COCOAPODS: 1.5.3

@@ -9,10 +9,19 @@ class Apartment < ApplicationRecord
   validates :lat, presence: true, :inclusion => -90..90
   validates :lon, presence: true, :inclusion => -180..180
 
+  validate :realtor_valid
+
   def to_json
     {
-      name: self.name, floorAreaSize: self.floor_area_size.to_f, pricePerMonth: self.price_per_month.to_f,
+      name: self.name, floorAreaSize: self.floor_area_size.to_f, pricePerMonth: (self.price_per_month.to_f / 100.0),
       lat: lat.to_f, lon: lon.to_f, numberOfRooms: number_of_rooms, description: description, rented: rented, id: id
     }
+  end
+
+  def realtor_valid
+    user = User.find_by_id(self.realtor_id)
+    if user.nil? || !user.realtor?
+      self.errors.add(:base, "Realtor is not valid")
+    end
   end
 end

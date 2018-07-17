@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "68A8C9158D6DD8DB3466F5E1F09CDCA2"
-               BlueprintName = "Strongbox"
+               BlueprintIdentifier = "187667A273E7D3C8FA9E0886F75400DA"
+               BlueprintName = "DOPDropDownMenu"
                ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "Strongbox.framework">
+               BuildableName = "DOPDropDownMenu.framework">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -234,11 +234,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Apartments/Classes/Aoartments/ApartmentsStore.swift"
-            timestampString = "553400550.177654"
+            timestampString = "553505121.402917"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "77"
-            endingLineNumber = "77"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
             landmarkName = "fetchApartments(completion:)"
             landmarkType = "7">
          </BreakpointContent>

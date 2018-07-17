@@ -11,6 +11,7 @@ target 'Apartments' do
   pod 'SwiftyJSON', '~> 4.1.0'
   pod 'AZTableView', '0.0.3'
   pod 'Eureka', '4.2.0'
+  pod 'DOPDropDownMenu'
 
   target 'ApartmentsTests' do
     inherit! :search_paths

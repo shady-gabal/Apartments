@@ -6,18 +6,18 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
-User.create!({
-  name: "Shady Gabal",
-  email: "shadygabal@gmail.com",
-  password: "12345678",
-  id: 1
-            })
+# User.create!({
+#   name: "Shady Gabal",
+#   email: "shadygabal@gmail.com",
+#   password: "12345678",
+#   id: 1
+#             })
 
 Apartment.create!({
   name: "Great Fake Apartment",
   description: "Here's a really nice fake apartment in the middle of nowhere",
   floor_area_size: 5000,
-  price_per_month: 1000,
+  price_per_month: 100000,
   number_of_rooms: 2,
   lat: 40.232,
   lon: -74.903,
@@ -28,7 +28,7 @@ Apartment.create!({
                    name: "Apartment Number 2",
                    description: "A really crappy apartment.",
                    floor_area_size: 300,
-                   price_per_month: 100,
+                   price_per_month: 10000,
                    number_of_rooms: 1,
                    lat: 45.932,
                    lon: -71.903,

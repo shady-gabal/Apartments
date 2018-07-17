@@ -1,6 +1,6 @@
 module Api::V1
   class ApartmentsController < ApplicationController
-    load_and_authorize_resource param_method: :apartment_params
+    load_and_authorize_resource param_method: :apartment_params, except: [:index]
     before_action :set_apartment, only: [:update, :destroy]
     before_action :authenticate_user!
 
@@ -11,6 +11,8 @@ module Api::V1
       end
       realtor_emails = User.where(:role => User::Role::REALTOR).select(:email).map {|u| u.email}
 
+      a = {data: apartments.map {|a| a.to_json}, permissions: current_user.client? ? "view" : "crud", availableRealtorEmails: realtor_emails}
+
       render json: {data: apartments.map {|a| a.to_json}, permissions: current_user.client? ? "view" : "crud", availableRealtorEmails: realtor_emails}
     end
 
@@ -18,7 +20,7 @@ module Api::V1
     def create
       data = apartment_params
       realtor_email = data.delete(:realtor)
-      realtor = realtor_email ? User.find_by_email(realtor_email) : nil
+      realtor = !realtor_email.blank? ? User.find_by_email(realtor_email) : nil
 
       @apartment = Apartment.new(data)
       @apartment.realtor = realtor
@@ -63,7 +65,10 @@ module Api::V1
 
     # Only allow a trusted parameter "white list" through.
     def apartment_params
-      params.require(:apartment).permit(:name, :description, :floor_area_size, :price_per_month, :number_of_rooms, :lat, :lon, :realtor)
+      data = params.require(:apartment).permit(:name, :description, :floor_area_size, :price_per_month, :number_of_rooms, :lat, :lon, :realtor)
+      data[:price_per_month] = (data[:price_per_month].to_f * 100.0).to_i unless data[:price_per_month].nil?
+
+      data
     end
   end
 end
