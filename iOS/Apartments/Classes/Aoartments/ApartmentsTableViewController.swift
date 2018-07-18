@@ -38,6 +38,7 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   override func viewDidLoad() {
     super.viewDidLoad()
     self.noResults = nil
+    self.loadingView = nil
 
     let menuViewOrigin = (self.navigationController?.navigationBar.frame.size.height ?? 0) + UIApplication.shared.statusBarFrame.size.height
     
@@ -46,9 +47,7 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       menuView.dataSource = self
       self.view.addSubview(menuView)
     }
-    
-    self.tabBarController?.navigationItem.leftBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .refresh, target: self, action: #selector(refreshAllApartments))
-    
+
     self.fetchData()
   }
   
@@ -64,7 +63,7 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   
   private func fetchDataCallback(resultCount:Int, error: Error?) {
     if error == nil {
-      self.setAddButton()
+      self.setNavigationItemButtons()
       self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
       self.reloadTableView()
     }
@@ -83,11 +82,6 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       mapView.addAnnotation(annotation)
     }
     self.tableView?.reloadData()
-  }
-
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-    setAddButton()
   }
   
   func setApartmentsMatchingFilters() {
@@ -121,10 +115,24 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       return true
     })
   }
+
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    setNavigationItemButtons()
+  }
   
-  func setAddButton() {
+  func setNavigationItemButtons(hide:Bool = false) {
+    self.setRefreshButton(hide: hide)
+    self.setAddButton(hide: hide)
+  }
+  
+  func setRefreshButton(hide:Bool = false) {
+    self.tabBarController?.navigationItem.leftBarButtonItem = hide ? nil : UIBarButtonItem.init(barButtonSystemItem: .refresh, target: self, action: #selector(refreshAllApartments))
+  }
+  
+  func setAddButton(hide:Bool = false) {
     var item:UIBarButtonItem? = nil
-    if UserSession.sharedInstance.apartmentsPermissions.rawValue >= Permission.CRUD.rawValue {
+    if !hide && UserSession.sharedInstance.apartmentsPermissions.rawValue >= Permission.CRUD.rawValue {
       item = UIBarButtonItem.init(barButtonSystemItem: .add, target: self, action: #selector(self.createButtonTapped))
     }
     self.tabBarController?.navigationItem.rightBarButtonItem = item

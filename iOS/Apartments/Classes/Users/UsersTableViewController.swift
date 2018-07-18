@@ -9,6 +9,7 @@
 import UIKit
 import AZTableView
 import MapKit
+import Alamofire
 
 class UsersTableViewController: AZTableViewController, UITableViewDelegate, UITableViewDataSource {
   
@@ -17,36 +18,51 @@ class UsersTableViewController: AZTableViewController, UITableViewDelegate, UITa
   override func viewDidLoad() {
     super.viewDidLoad()
     self.noResults = nil
+    self.loadingView = nil
     self.fetchData()
   }
   
   override func fetchData() {
     super.fetchData()
-    
-    UsersStore.sharedInstance.fetchUsers { (resultCount, error, res) in
-      if error == nil {
-        self.setAddButton()
-        self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
-      }
-      else {
-        if let statusCode = res.response?.statusCode {
-          if statusCode == 401 {
-            return self.didfetchData(resultCount: 0, haveMoreData: false)
-          }
+    UsersStore.sharedInstance.fetchUsers(excludedIds:UsersStore.sharedInstance.userIds(), completion:self.fetchDataCallback(resultCount:error:res:))
+  }
+  
+  func fetchDataCallback(resultCount:Int, error: Error?, res:DataResponse<Any>) {
+    if error == nil {
+      self.setNavigationItemButtons()
+      self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
+    }
+    else {
+      if let statusCode = res.response?.statusCode {
+        if statusCode == 401 {
+          return self.didfetchData(resultCount: 0, haveMoreData: false)
         }
-        self.errorDidOccured(error: error)
       }
+      self.errorDidOccured(error: error)
     }
   }
   
+  @objc func refreshAllUsers() {
+    UsersStore.sharedInstance.refreshAllUsers(completion: self.fetchDataCallback(resultCount:error:res:))
+  }
+
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
-    setAddButton()
+    setNavigationItemButtons()
   }
   
-  func setAddButton() {
+  func setNavigationItemButtons(hide:Bool = false) {
+    self.setRefreshButton(hide: hide)
+    self.setAddButton(hide: hide)
+  }
+  
+  func setRefreshButton(hide:Bool = false) {
+    self.tabBarController?.navigationItem.leftBarButtonItem = hide ? nil : UIBarButtonItem.init(barButtonSystemItem: .refresh, target: self, action: #selector(refreshAllUsers))
+  }
+  
+  func setAddButton(hide:Bool = false) {
     var item:UIBarButtonItem? = nil
-    if UserSession.sharedInstance.usersPermissions.rawValue >= Permission.CRUD.rawValue {
+    if !hide && UserSession.sharedInstance.usersPermissions.rawValue >= Permission.CRUD.rawValue {
       item = UIBarButtonItem.init(barButtonSystemItem: .add, target: self, action: #selector(self.createButtonTapped))
     }
     self.tabBarController?.navigationItem.rightBarButtonItem = item
@@ -90,7 +106,7 @@ class UsersTableViewController: AZTableViewController, UITableViewDelegate, UITa
     self.navigationController?.pushViewController(detail, animated: true)
   }
   
-  @objc func createButtonTapped() {
+  @objc private func createButtonTapped() {
     let detail = UserDetailViewController()
     self.navigationController?.pushViewController(detail, animated: true)
   }
@@ -100,7 +116,7 @@ class UsersTableViewController: AZTableViewController, UITableViewDelegate, UITa
   }
   
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-    if editingStyle == .delete && UserSession.sharedInstance.apartmentsPermissions.rawValue >= Permission.CRUD.rawValue {
+    if editingStyle == .delete && UserSession.sharedInstance.usersPermissions.rawValue >= Permission.CRUD.rawValue {
       let usr = UsersStore.sharedInstance.getUsers()[indexPath.row]
       UsersStore.sharedInstance.deleteUser(usr) { (success, error) in
         if !success {

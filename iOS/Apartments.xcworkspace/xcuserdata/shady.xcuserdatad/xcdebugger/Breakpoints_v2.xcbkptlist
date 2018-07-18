@@ -42,7 +42,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Apartments/Classes/RegisterViewController.swift"
-            timestampString = "553634604.343112"
+            timestampString = "553642358.602417"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "50"
@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Apartments/Classes/AccountTableViewController.swift"
-            timestampString = "553400550.1774091"
+            timestampString = "553642358.602474"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "29"
-            endingLineNumber = "29"
+            startingLineNumber = "23"
+            endingLineNumber = "23"
             landmarkName = "logout(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -176,22 +176,6 @@
             startingLineNumber = "46"
             endingLineNumber = "46"
             landmarkName = "isLoggedIn()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Apartments/Classes/Aoartments/ApartmentDetailViewController.swift"
-            timestampString = "553634604.343299"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "120"
-            endingLineNumber = "120"
-            landmarkName = "submit()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

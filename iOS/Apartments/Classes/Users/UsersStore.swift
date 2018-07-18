@@ -55,8 +55,12 @@ class UsersStore {
     }
   }
   
-  public func fetchUsers(completion: @escaping (Int, Error?, DataResponse<Any>)->Void) {
-    let excludedIds = self.userIds()
+  public func refreshAllUsers(completion: @escaping (Int, Error?, DataResponse<Any>)->Void) {
+    self.users = []
+    self.fetchUsers(excludedIds: [], completion: completion)
+  }
+  
+  public func fetchUsers(excludedIds:[Int], completion: @escaping (Int, Error?, DataResponse<Any>)->Void) {
     NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/users", params: ["excluded_ids": excludedIds], completion: { (json, error, res) in
       if error != nil || json == nil {
         return completion(0, error, res)
@@ -69,7 +73,7 @@ class UsersStore {
       
       let users = try? decoder.decode([User].self, from: json!["data"].rawData())
       if users != nil {
-        UsersStore.sharedInstance.users = users!
+        UsersStore.sharedInstance.users += users!
         resultCount += users!.count
       }
       

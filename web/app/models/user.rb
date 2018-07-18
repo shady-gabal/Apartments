@@ -29,6 +29,6 @@ class User < ActiveRecord::Base
   end
 
   def to_json
-    {name: self.name, email: self.provider === "email" ? self.uid : "", role: self.role}
+    {name: self.name, email: self.provider === "email" ? self.uid : "", role: self.role, id: self.id}
   end
 end

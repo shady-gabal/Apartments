@@ -1,13 +1,14 @@
 module Api::V1
   class ApartmentsController < ApplicationController
     load_and_authorize_resource param_method: :apartment_params, except: [:index]
-    before_action :set_apartment, only: [:update, :destroy]
     before_action :authenticate_user!
 
     def index
       authorize! :read, Apartment
       filters = params[:filters] || {}
-      apartments = Apartment.where.not(:id => (params[:excluded_ids] || []))
+      excluded_ids = params[:excluded_ids] || []
+      apartments = Apartment.all.includes(:realtor)
+      apartments = apartments.where.not(:id => excluded_ids) unless excluded_ids.blank?
 
       filters.each do |filter, vals|
         min = vals[0]
@@ -21,8 +22,8 @@ module Api::V1
           apartments = apartments.where("floor_area_size >= ?", min.to_f)
           apartments = apartments.where("floor_area_size <= ?", max.to_f) unless max.blank?
         elsif filter == "price_per_month"
-          apartments = apartments.where("price_per_month >= ?", min.to_i)
-          apartments = apartments.where("price_per_month <= ?", max.to_i) unless max.blank?
+          apartments = apartments.where("price_per_month >= ?", min.to_i * 100)
+          apartments = apartments.where("price_per_month <= ?", max.to_i * 100) unless max.blank?
         elsif filter == "number_of_rooms"
           apartments = apartments.where("number_of_rooms >= ?", min.to_i)
           apartments = apartments.where("number_of_rooms <= ?", max.to_i) unless max.blank?
@@ -89,7 +90,7 @@ module Api::V1
 
     # Only allow a trusted parameter "white list" through.
     def apartment_params
-      data = params.require(:apartment).permit(:name, :description, :floor_area_size, :price_per_month, :number_of_rooms, :lat, :lon, :realtor)
+      data = params.require(:apartment).permit(:name, :description, :floor_area_size, :price_per_month, :number_of_rooms, :rented, :lat, :lon, :realtor)
       data[:price_per_month] = (data[:price_per_month].to_f * 100.0).to_i unless data[:price_per_month].nil?
 
       data

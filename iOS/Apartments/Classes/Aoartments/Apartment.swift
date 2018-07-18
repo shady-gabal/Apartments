@@ -18,4 +18,5 @@ struct Apartment : Codable {
   var lat:Double
   var lon:Double
   var rented:Bool
+  var realtor:String?
 }

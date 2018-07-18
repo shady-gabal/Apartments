@@ -16,7 +16,6 @@ class UserDetailViewController: FormViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .save, target: self, action: #selector(self.submit))
     
     form +++ TextRow(){ row in
       row.title = "Name"
@@ -38,6 +37,7 @@ class UserDetailViewController: FormViewController {
     <<< PushRow<String>() { row in
       row.title = "Role"
       row.tag = "role"
+      row.value = self.user?.role
       row.options = [Role.Client.rawValue, Role.Realtor.rawValue, Role.Admin.rawValue]
       row.add(rule: RuleRequired(msg: row.title! + " required"))
     }
@@ -48,8 +48,10 @@ class UserDetailViewController: FormViewController {
     
     if errors.count == 0 {
       var userVals = form.values()
-      let userParams = userVals.mapValues { (val) -> Any in
-        return val ?? nil
+      
+      var userParams = [String:Any]()
+      for (key,val) in userVals {
+        userParams[key] = val ?? nil
       }
       
       let password = userVals["password"] as! String?
@@ -97,6 +99,23 @@ class UserDetailViewController: FormViewController {
     }
   }
   
+  override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    setSaveButton()
+  }
+  
+  override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    setSaveButton(hide: true)
+  }
+  
+  private func setSaveButton(hide:Bool=false) {
+    var item:UIBarButtonItem? = nil
+    if !hide && UserSession.sharedInstance.usersPermissions.rawValue >= Permission.CRUD.rawValue {
+      item = UIBarButtonItem.init(barButtonSystemItem: .save, target: self, action: #selector(self.submit))
+    }
+    self.navigationItem.rightBarButtonItem = item
+  }
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.

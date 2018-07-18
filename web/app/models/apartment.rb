@@ -14,7 +14,8 @@ class Apartment < ApplicationRecord
   def to_json
     {
       name: self.name, floorAreaSize: self.floor_area_size.to_f, pricePerMonth: (self.price_per_month.to_f / 100.0),
-      lat: lat.to_f, lon: lon.to_f, numberOfRooms: number_of_rooms, description: description, rented: rented, id: id
+      lat: lat.to_f, lon: lon.to_f, numberOfRooms: number_of_rooms, description: description, rented: rented, id: id,
+      realtor: self.realtor.nil? ? nil : self.realtor.email
     }
   end
 

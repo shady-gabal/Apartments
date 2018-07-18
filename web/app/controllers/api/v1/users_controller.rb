@@ -1,23 +1,25 @@
 module Api::V1
   class UsersController < ApplicationController
-    load_and_authorize_resource param_method: :user_params
     before_action :authenticate_user!, except: [:create]
+    before_action :set_user, only: [:update, :destroy]
 
     def index
-      if !current_user.admin?
-        render json:{permissions: "none"}
-      end
+      authorize! :read, Client
+      authorize! :read, Realtor
 
-      users = User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => (params[:excluded_ids] || [])).limit(20)
+      users = User.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => (params[:excluded_ids] || [])).limit(20)
 
       render json: {data: users, permissions: "crud"}
     end
 
     def create
       @user = User.new(user_params)
+      authorize! :create, Client if @user.client?
+      authorize! :create, Realtor if @user.realtor?
+      authorize! :create, Admin if @user.admin?
 
       if @user.save
-        render json: @user, status: :created, location: @user
+        render json: @user.to_json, status: :created
       else
         render json: {errors: @user.errors.full_messages}, status: :unprocessable_entity
       end
@@ -25,7 +27,12 @@ module Api::V1
 
 
     def update
-      if @user.update(user_params)
+      @user.assign_attributes(user_params)
+      authorize! :update, Client if @user.client?
+      authorize! :update, Realtor if @user.realtor?
+      authorize! :update, Admin if @user.admin?
+
+      if @user.save
         render json: @user.to_json
       else
         render json: {errors: @user.errors.full_messages}, status: :unprocessable_entity
@@ -33,6 +40,10 @@ module Api::V1
     end
 
     def destroy
+      authorize! :destroy, Client if @user.client?
+      authorize! :destroy, Realtor if @user.realtor?
+      authorize! :destroy, Admin if @user.admin?
+
       if @user.destroy
         render json:{}
       else
@@ -43,7 +54,17 @@ module Api::V1
     private
 
     def user_params
-      params.require(:user).permit(:email, :password, :name, :role)
+      data = params.require(:user).permit(:email, :password, :name, :role, :realtor)
+      realtor_email = data.delete(:realtor)
+      if !realtor_email.blank?
+        data[:realtor] = User.find_by_email(realtor_email)
+      end
+
+      data
+    end
+
+    def set_user
+      @user = User.find_by_id params[:id]
     end
   end
 end
