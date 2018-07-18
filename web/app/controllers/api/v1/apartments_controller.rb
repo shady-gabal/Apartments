@@ -5,13 +5,35 @@ module Api::V1
     before_action :authenticate_user!
 
     def index
+      authorize! :read, Apartment
+      filters = params[:filters] || {}
       apartments = Apartment.where.not(:id => (params[:excluded_ids] || []))
+
+      filters.each do |filter, vals|
+        min = vals[0]
+        max = vals[1]
+
+        if min.blank? || (!max.blank? && min.to_f > max.to_f)
+          next
+        end
+
+        if filter == "floor_area_size"
+          apartments = apartments.where("floor_area_size >= ?", min.to_f)
+          apartments = apartments.where("floor_area_size <= ?", max.to_f) unless max.blank?
+        elsif filter == "price_per_month"
+          apartments = apartments.where("price_per_month >= ?", min.to_i)
+          apartments = apartments.where("price_per_month <= ?", max.to_i) unless max.blank?
+        elsif filter == "number_of_rooms"
+          apartments = apartments.where("number_of_rooms >= ?", min.to_i)
+          apartments = apartments.where("number_of_rooms <= ?", max.to_i) unless max.blank?
+        end
+      end
+
       if current_user.client?
         apartments = apartments.where(:rented => false)
       end
-      realtor_emails = User.where(:role => User::Role::REALTOR).select(:email).map {|u| u.email}
 
-      a = {data: apartments.map {|a| a.to_json}, permissions: current_user.client? ? "view" : "crud", availableRealtorEmails: realtor_emails}
+      realtor_emails = User.where(:role => User::Role::REALTOR).select(:email).map {|u| u.email}
 
       render json: {data: apartments.map {|a| a.to_json}, permissions: current_user.client? ? "view" : "crud", availableRealtorEmails: realtor_emails}
     end

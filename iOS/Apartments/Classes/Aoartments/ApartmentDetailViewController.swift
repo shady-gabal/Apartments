@@ -19,7 +19,7 @@ class ApartmentDetailViewController: FormViewController {
     if UserSession.sharedInstance.usersPermissions.rawValue >= Permission.CRUD.rawValue {
       self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .save, target: self, action: #selector(submit))
     }
-    
+
     form +++ TextRow(){ row in
       row.title = "Name"
       row.tag = "name"
@@ -123,6 +123,7 @@ class ApartmentDetailViewController: FormViewController {
       self.showAlert(title: "Error", message: errorsString)
     }
   }
+
   
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()

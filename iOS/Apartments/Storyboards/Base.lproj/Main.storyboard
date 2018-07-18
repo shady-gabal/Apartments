@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JZT-id-fNE">
-                                <rect key="frame" x="0.0" y="200" width="375" height="467"/>
+                                <rect key="frame" x="0.0" y="250" width="375" height="417"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ApartmentsTableViewCell" textLabel="rPA-pC-w8N" detailTextLabel="3gX-Ta-UZF" style="IBUITableViewCellStyleSubtitle" id="OQu-9W-fSU">
@@ -60,9 +60,9 @@
                                 </constraints>
                             </view>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="E3H-vd-VaQ">
-                                <rect key="frame" x="0.0" y="50" width="375" height="150"/>
+                                <rect key="frame" x="0.0" y="50" width="375" height="200"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="150" id="7P9-Xu-tml"/>
+                                    <constraint firstAttribute="height" constant="200" id="7P9-Xu-tml"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="delegate" destination="d0S-Is-YBt" id="Np0-p6-gle"/>

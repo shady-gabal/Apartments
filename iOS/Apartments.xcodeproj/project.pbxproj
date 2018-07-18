@@ -12,6 +12,7 @@
 		F21B4F3220FB1DF100542974 /* ApartmentDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21B4F3120FB1DF100542974 /* ApartmentDetailViewController.swift */; };
 		F21B4F3420FBF41000542974 /* UserDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21B4F3320FBF41000542974 /* UserDetailViewController.swift */; };
 		F21B4F3620FC1F2F00542974 /* UsersTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21B4F3520FC1F2F00542974 /* UsersTableViewController.swift */; };
+		F221D5C220FEEB31004ECBBC /* ApartmentAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F221D5C120FEEB31004ECBBC /* ApartmentAnnotation.swift */; };
 		F22AF09B20F4401D004F26E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22AF09A20F4401D004F26E1 /* AppDelegate.swift */; };
 		F22AF0A220F4401D004F26E1 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F22AF0A020F4401D004F26E1 /* Main.storyboard */; };
 		F22AF0A420F4401E004F26E1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F22AF0A320F4401E004F26E1 /* Assets.xcassets */; };
@@ -65,6 +66,7 @@
 		F21B4F3120FB1DF100542974 /* ApartmentDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApartmentDetailViewController.swift; sourceTree = "<group>"; };
 		F21B4F3320FBF41000542974 /* UserDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailViewController.swift; sourceTree = "<group>"; };
 		F21B4F3520FC1F2F00542974 /* UsersTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsersTableViewController.swift; sourceTree = "<group>"; };
+		F221D5C120FEEB31004ECBBC /* ApartmentAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApartmentAnnotation.swift; sourceTree = "<group>"; };
 		F22AF09720F4401D004F26E1 /* Apartments.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Apartments.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F22AF09A20F4401D004F26E1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F22AF0A120F4401D004F26E1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				F288535620F4666600AB6C48 /* Apartment.swift */,
 				F21B4F3120FB1DF100542974 /* ApartmentDetailViewController.swift */,
 				F246AA8D20F97D53000B2046 /* ApartmentsTableViewController.swift */,
+				F221D5C120FEEB31004ECBBC /* ApartmentAnnotation.swift */,
 			);
 			path = Aoartments;
 			sourceTree = "<group>";
@@ -490,6 +493,7 @@
 				F21B4F3420FBF41000542974 /* UserDetailViewController.swift in Sources */,
 				F22AF09B20F4401D004F26E1 /* AppDelegate.swift in Sources */,
 				F21B4F3620FC1F2F00542974 /* UsersTableViewController.swift in Sources */,
+				F221D5C220FEEB31004ECBBC /* ApartmentAnnotation.swift in Sources */,
 				F246AA8A20F5A601000B2046 /* Utils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

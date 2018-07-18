@@ -53,7 +53,7 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   override func fetchData() {
     super.fetchData()
 
-    ApartmentsStore.sharedInstance.fetchApartments { (resultCount, error) in
+    ApartmentsStore.sharedInstance.fetchApartmentsWithFilters(self.filtersParams(), completion: { (resultCount, error) in
       if error == nil {
         self.setAddButton()
         self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
@@ -62,14 +62,14 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       else {
         self.errorDidOccured(error: error)
       }
-    }
+    })
   }
   
   func reloadTableView() {
     self.setApartmentsMatchingFilters()
     self.mapView.removeAnnotations(self.mapView.annotations)
     self.apartmentsMatchingFilters.forEach { (apt) in
-      let annotation = MKPointAnnotation()
+      let annotation = ApartmentAnnotation(apartmentId: apt.id)
       annotation.coordinate = CLLocationCoordinate2D(latitude: apt.lat, longitude: apt.lon)
       annotation.title = apt.name
       mapView.addAnnotation(annotation)
@@ -140,9 +140,20 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
     let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
     let apartment = self.apartmentForIndexPath(indexPath)
     cell.textLabel?.text = apartment.name
-    cell.detailTextLabel?.text = apartment.rented ? "Rented" : "Rentable"
+    let rentedStatus = apartment.rented ? "Rented" : "Available"
+    cell.detailTextLabel?.text = "\(apartment.floorAreaSize) sq ft - $\(apartment.pricePerMonth) - \(apartment.numberOfRooms) room(s) - \(rentedStatus)"
     
     return cell
+  }
+  
+  func apartmentForIndexPath(_ indexPath:IndexPath) -> Apartment {
+    return self.apartmentsMatchingFilters[indexPath.row]
+  }
+  
+  func showDetailForApartment(_ apartment:Apartment) {
+    let detail = ApartmentDetailViewController()
+    detail.apartment = apartment
+    self.navigationController?.pushViewController(detail, animated: true)
   }
 
   // MARK: - Table view data source
@@ -154,14 +165,8 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
     return 0
   }
   
-  func apartmentForIndexPath(_ indexPath:IndexPath) -> Apartment {
-    return self.apartmentsMatchingFilters[indexPath.row]
-  }
-  
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-    let detail = ApartmentDetailViewController()
-    detail.apartment = ApartmentsStore.sharedInstance.getApartments()[indexPath.row]
-    self.navigationController?.pushViewController(detail, animated: true)
+    self.showDetailForApartment(ApartmentsStore.sharedInstance.getApartments()[indexPath.row])
   }
   
   func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -235,13 +240,20 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   func menu(_ menu: DOPDropDownMenu!, didSelectRowAt indexPath: DOPIndexPath!) {
     if let column = FilterColumn(rawValue: indexPath.column) {
       if let filter = self.filterForIndexPath(indexPath) {
+        if self.filters[column] != nil && self.filters[column]! == filter {
+          return
+        }
         self.filters[column] = filter
       }
       else {
+        if self.filters[column] == nil {
+          return
+        }
         self.filters.removeValue(forKey: column)
       }
       
-      self.reloadTableView()
+      self.fetchData()
+//      self.reloadTableView()
     }
   }
   
@@ -265,6 +277,33 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
     }
     
     return arrayToUse![indexPath.row-1]
+  }
+  
+  func filtersParams() -> [String:[String]] {
+    var dict:[String:[String]] = [:]
+    
+    for (column,filter) in self.filters {
+      let maxFilter = filter.1 == nil ? "" : "\(filter.1!)"
+      if column.rawValue == FilterColumn.Size.rawValue {
+        dict["floor_area_size"] = ["\(filter.0)", maxFilter]
+      }
+      else if column.rawValue == FilterColumn.Price.rawValue {
+        dict["price_per_month"] = ["\(filter.0)", maxFilter]
+      }
+      else if column.rawValue == FilterColumn.NumRooms.rawValue {
+        dict["number_of_rooms"] = ["\(filter.0)", maxFilter]
+      }
+    }
+    
+    return dict
+  }
+  
+  func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+    if let annotation = view.annotation as? ApartmentAnnotation {
+      if let apt = ApartmentsStore.sharedInstance.getApartmentWithId(annotation.apartmentId) {
+        self.showDetailForApartment(apt)
+      }
+    }
   }
   
   @objc func createButtonTapped() {

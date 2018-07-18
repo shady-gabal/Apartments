@@ -6,7 +6,7 @@ class Ability
     #
     user ||= User.new # guest user (not logged in)
     if user.admin?
-      can :manage, :all
+      can :manage, [Apartment,User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR])]
     elsif user.realtor?
       can :manage, Apartment
     elsif user.client?

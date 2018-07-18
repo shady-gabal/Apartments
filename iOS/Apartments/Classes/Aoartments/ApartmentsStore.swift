@@ -44,6 +44,12 @@ class ApartmentsStore {
     return self.apartments
   }
   
+  func getApartmentWithId(_ id:Int) -> Apartment? {
+    return self.apartments.first(where: { (apt) -> Bool in
+      return apt.id == id
+    })
+  }
+  
   func getAvailableRealtorEmails() -> [String] {
     return availableRealtorEmails
   }
@@ -64,9 +70,27 @@ class ApartmentsStore {
     }
   }
   
-  public func fetchApartments(completion: @escaping (Int, Error?)->Void) {
+  public func updateApartment(_ apt:Apartment, completion: @escaping (Apartment?, Error?)->Void) {
+    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments/\(apt.id)", params: [:], completion: { (json, error, res) in
+      if error != nil || json == nil {
+        return completion(nil, error)
+      }
+      
+      let decoder = JSONDecoder()
+      
+      let apartmentData = json!["data"]
+      let newApartment = try? decoder.decode(Apartment.self, from: apartmentData.rawData())
+      if newApartment != nil {
+        self.setApartment(newApartment!)
+      }
+      
+      completion(newApartment, error)
+    })
+  }
+  
+  public func fetchApartmentsWithFilters(_ filters:[String:[String]], completion: @escaping (Int, Error?)->Void) {
     let excludedIds = self.apartmentIds()
-    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments", params: ["excluded_ids": excludedIds], completion: { (json, error, res) in
+    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments", params: ["excluded_ids": excludedIds, "filters": filters], completion: { (json, error, res) in
       if error != nil || json == nil {
         return completion(0, error)
       }
