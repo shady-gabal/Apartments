@@ -29,7 +29,7 @@ class LoginViewController: UIViewController {
       return self.showAlert(title: "Missing fields", message: "Please fill in your password")
     }
     
-    NetworkManager.performAPIRequestJSON(.post, urlSuffix: "/auth/sign_in", params: ["email": email, "password" : password]) { (json, error) in
+    NetworkManager.performAPIRequestJSON(.post, urlSuffix: "/auth/sign_in", params: ["email": email, "password" : password]) { (json, error, res) in
       if (json == nil) {
         return self.showAlert(title: "Error", message: "An error occurred. Please try again.")
       }

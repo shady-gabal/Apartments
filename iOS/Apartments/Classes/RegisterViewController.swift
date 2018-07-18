@@ -41,7 +41,7 @@ class RegisterViewController: UIViewController {
       return self.showAlert(title: "Error", message: "Please enter a password.")
     }
     
-    NetworkManager.performAPIRequestJSON(.post, urlSuffix: "/auth", params: ["name": name, "email": email, "password" : password ]) { (json, error) in
+    NetworkManager.performAPIRequestJSON(.post, urlSuffix: "/auth", params: ["name": name, "email": email, "password" : password ]) { (json, error, res) in
       if json == nil {
         return self.showAlert(title: "Error", message: "An error occurred. Please try again.")
       }

@@ -53,7 +53,7 @@ class ApartmentsStore {
   }
   
   func deleteApartment(_ apt:Apartment, completion: @escaping (Bool, Error?) -> Void) {
-    NetworkManager.performAPIRequestJSON(.delete, urlSuffix: "/apartments/\(apt.id)", params: [:]) { (json, error) in
+    NetworkManager.performAPIRequestJSON(.delete, urlSuffix: "/apartments/\(apt.id)", params: [:]) { (json, error, res) in
       if json != nil && error == nil {
         self.removeApartment(apt)
         completion(true, error)
@@ -66,7 +66,7 @@ class ApartmentsStore {
   
   public func fetchApartments(completion: @escaping (Int, Error?)->Void) {
     let excludedIds = self.apartmentIds()
-    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments", params: ["excluded_ids": excludedIds], completion: { (json, error) in
+    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments", params: ["excluded_ids": excludedIds], completion: { (json, error, res) in
       if error != nil || json == nil {
         return completion(0, error)
       }

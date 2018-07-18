@@ -65,7 +65,7 @@ class UserDetailViewController: FormViewController {
         urlSuffix += "/\(self.user!.id)"
       }
       
-      NetworkManager.performAPIRequestJSON(method, urlSuffix: urlSuffix, params: ["user": userParams]) { (json, error) in
+      NetworkManager.performAPIRequestJSON(method, urlSuffix: urlSuffix, params: ["user": userParams]) { (json, error, res) in
         if error != nil || json == nil {
           if let jsonErrors = json?["errors"].array {
             let errorsString = jsonErrors.map({ (val) -> String in

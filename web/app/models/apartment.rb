@@ -18,6 +18,8 @@ class Apartment < ApplicationRecord
     }
   end
 
+  private
+
   def realtor_valid
     user = User.find_by_id(self.realtor_id)
     if user.nil? || !user.realtor?

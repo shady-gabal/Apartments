@@ -19,7 +19,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="JZT-id-fNE">
-                                <rect key="frame" x="0.0" y="70" width="375" height="597"/>
+                                <rect key="frame" x="0.0" y="200" width="375" height="467"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="ApartmentsTableViewCell" textLabel="rPA-pC-w8N" detailTextLabel="3gX-Ta-UZF" style="IBUITableViewCellStyleSubtitle" id="OQu-9W-fSU">
@@ -53,17 +53,31 @@
                                 </connections>
                             </tableView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NEE-we-ScK">
-                                <rect key="frame" x="0.0" y="0.0" width="375" height="68"/>
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="50"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="BgA-gh-cfk"/>
+                                </constraints>
                             </view>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="E3H-vd-VaQ">
+                                <rect key="frame" x="0.0" y="50" width="375" height="150"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="150" id="7P9-Xu-tml"/>
+                                </constraints>
+                                <connections>
+                                    <outlet property="delegate" destination="d0S-Is-YBt" id="Np0-p6-gle"/>
+                                </connections>
+                            </mapView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="JZT-id-fNE" firstAttribute="centerX" secondItem="enQ-VD-ZO8" secondAttribute="centerX" id="1Kl-P3-d2q"/>
-                            <constraint firstItem="enQ-VD-ZO8" firstAttribute="top" secondItem="JZT-id-fNE" secondAttribute="top" constant="-50" id="6XU-7V-ieZ"/>
-                            <constraint firstItem="JZT-id-fNE" firstAttribute="top" secondItem="NEE-we-ScK" secondAttribute="bottom" constant="2" id="AOZ-Lc-gwl"/>
+                            <constraint firstItem="JZT-id-fNE" firstAttribute="top" secondItem="E3H-vd-VaQ" secondAttribute="bottom" id="1mD-IZ-COv"/>
+                            <constraint firstItem="E3H-vd-VaQ" firstAttribute="top" secondItem="NEE-we-ScK" secondAttribute="bottom" id="5Am-3g-Xcf"/>
+                            <constraint firstItem="E3H-vd-VaQ" firstAttribute="width" secondItem="u1F-3B-rLA" secondAttribute="width" id="5yd-yL-1dX"/>
                             <constraint firstItem="JZT-id-fNE" firstAttribute="bottom" secondItem="enQ-VD-ZO8" secondAttribute="bottom" constant="49" id="DUY-jP-i6O"/>
                             <constraint firstItem="NEE-we-ScK" firstAttribute="width" secondItem="u1F-3B-rLA" secondAttribute="width" id="HVV-gl-YCN"/>
+                            <constraint firstItem="E3H-vd-VaQ" firstAttribute="centerX" secondItem="enQ-VD-ZO8" secondAttribute="centerX" id="Mkr-Qe-XbQ"/>
                             <constraint firstItem="NEE-we-ScK" firstAttribute="centerX" secondItem="enQ-VD-ZO8" secondAttribute="centerX" id="VxR-UM-WTW"/>
                             <constraint firstItem="JZT-id-fNE" firstAttribute="width" secondItem="u1F-3B-rLA" secondAttribute="width" id="Xcb-A0-UYd"/>
                             <constraint firstItem="enQ-VD-ZO8" firstAttribute="top" secondItem="NEE-we-ScK" secondAttribute="top" constant="20" id="u4x-kS-3R5"/>
@@ -75,28 +89,11 @@
                     <connections>
                         <outlet property="errorView" destination="JuW-aa-Kq9" id="Vqg-3I-wjF"/>
                         <outlet property="filtersContainerView" destination="NEE-we-ScK" id="XZO-Cu-Lsp"/>
-                        <outlet property="loadingView" destination="byA-sS-BIZ" id="T55-R6-TyT"/>
+                        <outlet property="mapView" destination="E3H-vd-VaQ" id="7Vy-eF-gPZ"/>
                         <outlet property="tableView" destination="JZT-id-fNE" id="lRP-BF-iBs"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ecv-RS-Kik" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="byA-sS-BIZ" style="IBUITableViewCellStyleDefault" id="kgW-9O-cbE">
-                    <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
-                    <autoresizingMask key="autoresizingMask"/>
-                    <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="kgW-9O-cbE" id="RXZ-Ev-djT">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                        <subviews>
-                            <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Loading..." textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="byA-sS-BIZ">
-                                <rect key="frame" x="16" y="0.0" width="343" height="43.5"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
-                    </tableViewCellContentView>
-                </tableViewCell>
                 <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" textLabel="JuW-aa-Kq9" style="IBUITableViewCellStyleDefault" id="sdA-Zd-oWm">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                     <autoresizingMask key="autoresizingMask"/>
@@ -358,7 +355,6 @@
                     <tabBarItem key="tabBarItem" title="Users" id="phf-ea-1fJ"/>
                     <connections>
                         <outlet property="errorView" destination="sdA-Zd-oWm" id="nMS-WR-zWn"/>
-                        <outlet property="nextPageLoaderCell" destination="kgW-9O-cbE" id="RjA-22-s2g"/>
                         <outlet property="tableView" destination="5Ur-hE-RMR" id="skq-Ag-sKx"/>
                     </connections>
                 </tableViewController>

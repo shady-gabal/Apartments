@@ -92,7 +92,7 @@ class ApartmentDetailViewController: FormViewController {
         urlSuffix += "/\(self.apartment!.id)"
       }
       
-      NetworkManager.performAPIRequestJSON(method, urlSuffix: urlSuffix, params: ["apartment": apartmentVals]) { (json, error) in
+      NetworkManager.performAPIRequestJSON(method, urlSuffix: urlSuffix, params: ["apartment": apartmentVals]) { (json, error, res) in
         if error != nil || json == nil {
           if let jsonErrors = json?["errors"].array {
             let errorsString = jsonErrors.map({ (val) -> String in

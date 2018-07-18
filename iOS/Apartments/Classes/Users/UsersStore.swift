@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import Alamofire
 
 class UsersStore {
   static let sharedInstance = UsersStore()
@@ -43,7 +44,7 @@ class UsersStore {
   }
   
   func deleteUser(_ usr:User, completion: @escaping (Bool, Error?) -> Void) {
-    NetworkManager.performAPIRequestJSON(.delete, urlSuffix: "/users/\(usr.id)", params: [:]) { (json, error) in
+    NetworkManager.performAPIRequestJSON(.delete, urlSuffix: "/users/\(usr.id)", params: [:]) { (json, error, res) in
       if json != nil && error == nil {
         self.removeUser(usr)
         completion(true, error)
@@ -54,11 +55,11 @@ class UsersStore {
     }
   }
   
-  public func fetchUsers(completion: @escaping (Int, Error?)->Void) {
+  public func fetchUsers(completion: @escaping (Int, Error?, DataResponse<Any>)->Void) {
     let excludedIds = self.userIds()
-    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/users", params: ["excluded_ids": excludedIds], completion: { (json, error) in
+    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/users", params: ["excluded_ids": excludedIds], completion: { (json, error, res) in
       if error != nil || json == nil {
-        return completion(0, error)
+        return completion(0, error, res)
       }
       
       let decoder = JSONDecoder()
@@ -72,7 +73,7 @@ class UsersStore {
         resultCount += users!.count
       }
       
-      completion(resultCount, error)
+      completion(resultCount, error, res)
     })
   }
 }

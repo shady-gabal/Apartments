@@ -11,7 +11,9 @@ import AZTableView
 import MapKit
 import DOPDropDownMenu
 
-class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate, UITableViewDataSource, DOPDropDownMenuDelegate, DOPDropDownMenuDataSource {
+typealias Filter = (Double,Double?)
+
+class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate, UITableViewDataSource, DOPDropDownMenuDelegate, DOPDropDownMenuDataSource, MKMapViewDelegate {
   
   enum FilterColumn:Int {
     case Size = 0
@@ -19,30 +21,27 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
     case NumRooms = 2
     case TotalColumns = 3
   }
-  let filterColumnSizeOptions = [500, 1000, 2000, 3000, 4000, 5000]
-  let filterColumnPriceOptions = [1000, 1500, 2000, 2500, 3000, 3500]
-  let filterColumnNumRoomsOptions = [1,2,3,4,5]
-  
-  var sizeFilter:Int?
-  var priceFilter:Int?
-  var numRoomsFilter:Int?
-
-  let cellIdentifier = "ApartmentsTableViewCell"
-  
-  static let ApartmentsMapViewHeight:CGFloat = 150
-  static let ApartmentsFilterViewHeight:CGFloat = 50
-  
-  private var apartmentsMatchingFilters:[Apartment] = []
   
   @IBOutlet weak var filtersContainerView: UIView!
+  @IBOutlet weak var mapView: MKMapView!
+  
+  let filterColumnSizeOptions:[Filter] = [(1,500), (501,1000), (1001,2000), (2001,3000), (3001,4000), (4001, nil)]
+  let filterColumnPriceOptions:[Filter] = [(1,1000), (1001,1500), (1501,2000), (2001,2500), (2501,3000), (3001,3500)]
+  let filterColumnNumRoomsOptions:[Filter] = [(1,1),(2,2),(3,3),(4,4),(5,nil)]
+  
+  var filters:[FilterColumn:Filter] = [:]
+  
+  let cellIdentifier = "ApartmentsTableViewCell"
+  
+  private var apartmentsMatchingFilters:[Apartment] = []
   
   override func viewDidLoad() {
     super.viewDidLoad()
     self.noResults = nil
-    
+
     let menuViewOrigin = (self.navigationController?.navigationBar.frame.size.height ?? 0) + UIApplication.shared.statusBarFrame.size.height
     
-    if let menuView = DOPDropDownMenu.init(origin: CGPoint(x: 0, y: menuViewOrigin), andHeight: ApartmentsTableViewController.ApartmentsFilterViewHeight) {
+    if let menuView = DOPDropDownMenu.init(origin: CGPoint(x: 0, y: menuViewOrigin), andHeight: self.filtersContainerView.frame.size.height) {
       menuView.delegate = self
       menuView.dataSource = self
       self.view.addSubview(menuView)
@@ -58,12 +57,24 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       if error == nil {
         self.setAddButton()
         self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
-        self.tableView?.reloadData()
+        self.reloadTableView()
       }
       else {
         self.errorDidOccured(error: error)
       }
     }
+  }
+  
+  func reloadTableView() {
+    self.setApartmentsMatchingFilters()
+    self.mapView.removeAnnotations(self.mapView.annotations)
+    self.apartmentsMatchingFilters.forEach { (apt) in
+      let annotation = MKPointAnnotation()
+      annotation.coordinate = CLLocationCoordinate2D(latitude: apt.lat, longitude: apt.lon)
+      annotation.title = apt.name
+      mapView.addAnnotation(annotation)
+    }
+    self.tableView?.reloadData()
   }
 
   override func viewWillAppear(_ animated: Bool) {
@@ -73,15 +84,30 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   
   func setApartmentsMatchingFilters() {
     self.apartmentsMatchingFilters = ApartmentsStore.sharedInstance.getApartments().filter({ (apt) -> Bool in
-      if sizeFilter != nil {
-        
-      }
-      if priceFilter != nil {
-        
-      }
       
-      if numRoomsFilter != nil {
+      for (column,filter) in self.filters {
+        var val:Double = 0
         
+        if column.rawValue == FilterColumn.Size.rawValue {
+          val = apt.floorAreaSize
+        }
+        else if column.rawValue == FilterColumn.Price.rawValue {
+          val = apt.pricePerMonth
+        }
+        else if column.rawValue == FilterColumn.NumRooms.rawValue {
+          val = Double(apt.numberOfRooms)
+        }
+        else {
+          return false
+        }
+        
+        let min = filter.0
+        let max = filter.1 ?? Double.infinity
+        let satisfies = (val <= max && val >= min)
+        
+        if !satisfies {
+          return false
+        }
       }
       
       return true
@@ -107,12 +133,12 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   }
 
   override func AZtableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-    return ApartmentsStore.sharedInstance.getApartments().count
+    return self.apartmentsMatchingFilters.count
   }
 
   override func AZtableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-    let apartment = ApartmentsStore.sharedInstance.getApartments()[indexPath.row]
+    let apartment = self.apartmentForIndexPath(indexPath)
     cell.textLabel?.text = apartment.name
     cell.detailTextLabel?.text = apartment.rented ? "Rented" : "Rentable"
     
@@ -128,23 +154,10 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
     return 0
   }
   
-  func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-    let mapView = MKMapView.init(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.size.width, height: ApartmentsTableViewController.ApartmentsMapViewHeight))
-    
-    ApartmentsStore.sharedInstance.getApartments().forEach { (apt) in
-      let annotation = MKPointAnnotation()
-      annotation.coordinate = CLLocationCoordinate2D(latitude: apt.lat, longitude: apt.lon)
-      annotation.title = apt.name
-      mapView.addAnnotation(annotation)
-    }
-
-    return mapView
+  func apartmentForIndexPath(_ indexPath:IndexPath) -> Apartment {
+    return self.apartmentsMatchingFilters[indexPath.row]
   }
   
-  func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-    return ApartmentsTableViewController.ApartmentsMapViewHeight + ApartmentsTableViewController.ApartmentsFilterViewHeight
-  }
-
   func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     let detail = ApartmentDetailViewController()
     detail.apartment = ApartmentsStore.sharedInstance.getApartments()[indexPath.row]
@@ -161,7 +174,7 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   
   func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
     if editingStyle == .delete && UserSession.sharedInstance.apartmentsPermissions.rawValue >= Permission.CRUD.rawValue {
-      let apt = ApartmentsStore.sharedInstance.getApartments()[indexPath.row]
+      let apt = self.apartmentForIndexPath(indexPath)
       ApartmentsStore.sharedInstance.deleteApartment(apt) { (success, error) in
         if !success {
           self.showAlert(title: "Error", message: "There was an error deleting this apartment. Please try again.")
@@ -176,6 +189,8 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   func numberOfColumns(in menu: DOPDropDownMenu!) -> Int {
     return FilterColumn.TotalColumns.rawValue
   }
+  
+  // MARK: - Filter Menu Delegate
   
   func menu(_ menu: DOPDropDownMenu!, numberOfRowsInColumn column: Int) -> Int {
     if column == FilterColumn.Size.rawValue {
@@ -192,41 +207,25 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   }
   
   func menu(_ menu: DOPDropDownMenu!, titleForRowAt indexPath: DOPIndexPath!) -> String! {
-    var option:Int?
-    var prefix:String = "<"
-    
-    if indexPath.column == FilterColumn.Size.rawValue {
-      if indexPath.row == 0 {
+    if let filter = self.filterForIndexPath(indexPath) {
+      if filter.1 == nil {
+        return "\(filter.0)+"
+      }
+      else if filter.0 == filter.1 {
+        return "\(filter.0)"
+      }
+      
+      return "\(filter.0)-\(filter.1!)"
+    }
+    else {
+      if indexPath.column == FilterColumn.Size.rawValue {
         return "All Sizes"
       }
-      else {
-        option = filterColumnSizeOptions[indexPath.row-1]
-      }
-    }
-    else if indexPath.column == FilterColumn.Price.rawValue {
-      if indexPath.row == 0 {
+      else if indexPath.column == FilterColumn.Price.rawValue {
         return "All Prices"
       }
-      else {
-        option = filterColumnPriceOptions[indexPath.row-1]
-      }
-    }
-    else if indexPath.column == FilterColumn.NumRooms.rawValue {
-      if indexPath.row == 0 {
+      else if indexPath.column == FilterColumn.NumRooms.rawValue {
         return "All Rooms"
-      }
-      else {
-        prefix = ""
-        option = filterColumnNumRoomsOptions[indexPath.row-1]
-      }
-    }
-    
-    if let filter = option {
-      if self.menu(menu, numberOfRowsInColumn: indexPath.column) == indexPath.row + 1 {
-        return "\(filter)+"
-      }
-      else {
-        return "\(prefix)\(filter)"
       }
     }
     
@@ -234,8 +233,24 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
   }
   
   func menu(_ menu: DOPDropDownMenu!, didSelectRowAt indexPath: DOPIndexPath!) {
-    var arrayToUse:[Int]?
+    if let column = FilterColumn(rawValue: indexPath.column) {
+      if let filter = self.filterForIndexPath(indexPath) {
+        self.filters[column] = filter
+      }
+      else {
+        self.filters.removeValue(forKey: column)
+      }
+      
+      self.reloadTableView()
+    }
+  }
+  
+  func filterForIndexPath(_ indexPath:DOPIndexPath) -> Filter? {
+    if (indexPath.row == 0) {
+      return nil
+    }
     
+    var arrayToUse:[Filter]?
     if indexPath.column == FilterColumn.Size.rawValue {
       arrayToUse = filterColumnSizeOptions
     }
@@ -245,12 +260,12 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
     else if indexPath.column == FilterColumn.NumRooms.rawValue {
       arrayToUse = filterColumnNumRoomsOptions
     }
+    else {
+      return nil
+    }
     
-    
-    setApartmentsMatchingFilters()
-    self.tableView?.reloadData()
+    return arrayToUse![indexPath.row-1]
   }
-  
   
   @objc func createButtonTapped() {
     let detail = ApartmentDetailViewController()

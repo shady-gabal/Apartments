@@ -14,7 +14,7 @@ class NetworkManager: NSObject {
   
   static let ApiBaseUrl:String = "https://shadyg.ngrok.io/api/v1"
   
-  static func performAPIRequestJSON(_ method: Alamofire.HTTPMethod, urlSuffix:String, params:[String : Any], completion: @escaping (JSON?, Error?) -> Void) {
+  static func performAPIRequestJSON(_ method: Alamofire.HTTPMethod, urlSuffix:String, params:[String : Any], completion: @escaping (JSON?, Error?, DataResponse<Any>) -> Void) {
     let url = NetworkManager.ApiBaseUrl + urlSuffix
     var headers: HTTPHeaders = [:]
 
@@ -38,10 +38,10 @@ class NetworkManager: NSObject {
         }
         
         if response.result.isFailure {
-          completion(jsonResponse == JSON.null ? nil : jsonResponse, response.result.error)
+          completion(jsonResponse == JSON.null ? nil : jsonResponse, response.result.error, response)
         }
         else{
-          completion(jsonResponse == JSON.null ? nil : jsonResponse, nil)
+          completion(jsonResponse == JSON.null ? nil : jsonResponse, nil, response)
         }
       })
   }
