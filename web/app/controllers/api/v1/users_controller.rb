@@ -25,7 +25,6 @@ module Api::V1
       end
     end
 
-
     def update
       @user.assign_attributes(user_params)
       authorize! :update, Client if @user.client?
