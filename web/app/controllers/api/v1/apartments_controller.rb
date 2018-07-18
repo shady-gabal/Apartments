@@ -33,6 +33,8 @@ module Api::V1
         apartments = apartments.where(:rented => false)
       end
 
+      apartments = apartments.limit(20)
+
       realtor_emails = User.where(:role => User::Role::REALTOR).select(:email).map {|u| u.email}
 
       render json: {data: apartments.map {|a| a.to_json}, permissions: current_user.client? ? "view" : "crud", availableRealtorEmails: realtor_emails}

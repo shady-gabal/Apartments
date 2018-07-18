@@ -17,8 +17,6 @@ class UsersTableViewController: AZTableViewController, UITableViewDelegate, UITa
   override func viewDidLoad() {
     super.viewDidLoad()
     self.noResults = nil
-
-    self.navigationItem.rightBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .add, target: self, action: #selector(createButtonTapped))
     self.fetchData()
   }
   
@@ -29,7 +27,6 @@ class UsersTableViewController: AZTableViewController, UITableViewDelegate, UITa
       if error == nil {
         self.setAddButton()
         self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
-//        self.tableView?.reloadData()
       }
       else {
         if let statusCode = res.response?.statusCode {

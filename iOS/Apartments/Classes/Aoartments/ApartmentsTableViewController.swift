@@ -47,22 +47,30 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       self.view.addSubview(menuView)
     }
     
+    self.tabBarController?.navigationItem.leftBarButtonItem = UIBarButtonItem.init(barButtonSystemItem: .refresh, target: self, action: #selector(refreshAllApartments))
+    
     self.fetchData()
   }
-
+  
+  @objc func refreshAllApartments() {
+    ApartmentsStore.sharedInstance.refreshAllApartments(self.filtersParams(), completion: self.fetchDataCallback(resultCount:error:))
+  }
+  
   override func fetchData() {
     super.fetchData()
 
-    ApartmentsStore.sharedInstance.fetchApartmentsWithFilters(self.filtersParams(), completion: { (resultCount, error) in
-      if error == nil {
-        self.setAddButton()
-        self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
-        self.reloadTableView()
-      }
-      else {
-        self.errorDidOccured(error: error)
-      }
-    })
+    ApartmentsStore.sharedInstance.fetchApartmentsWithFilters(self.filtersParams(), excludedIds: ApartmentsStore.sharedInstance.apartmentIds(), completion: self.fetchDataCallback(resultCount:error:))
+  }
+  
+  private func fetchDataCallback(resultCount:Int, error: Error?) {
+    if error == nil {
+      self.setAddButton()
+      self.didfetchData(resultCount: resultCount, haveMoreData: resultCount != 0)
+      self.reloadTableView()
+    }
+    else {
+      self.errorDidOccured(error: error)
+    }
   }
   
   func reloadTableView() {
@@ -253,7 +261,6 @@ class ApartmentsTableViewController: AZTableViewController, UITableViewDelegate,
       }
       
       self.fetchData()
-//      self.reloadTableView()
     }
   }
   

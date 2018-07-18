@@ -70,26 +70,12 @@ class ApartmentsStore {
     }
   }
   
-  public func updateApartment(_ apt:Apartment, completion: @escaping (Apartment?, Error?)->Void) {
-    NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments/\(apt.id)", params: [:], completion: { (json, error, res) in
-      if error != nil || json == nil {
-        return completion(nil, error)
-      }
-      
-      let decoder = JSONDecoder()
-      
-      let apartmentData = json!["data"]
-      let newApartment = try? decoder.decode(Apartment.self, from: apartmentData.rawData())
-      if newApartment != nil {
-        self.setApartment(newApartment!)
-      }
-      
-      completion(newApartment, error)
-    })
+  public func refreshAllApartments(_ filters:[String:[String]], completion: @escaping (Int, Error?)->Void) {
+    self.apartments = []
+    self.fetchApartmentsWithFilters(filters, excludedIds: [], completion: completion)
   }
   
-  public func fetchApartmentsWithFilters(_ filters:[String:[String]], completion: @escaping (Int, Error?)->Void) {
-    let excludedIds = self.apartmentIds()
+  public func fetchApartmentsWithFilters(_ filters:[String:[String]], excludedIds:[Int], completion: @escaping (Int, Error?)->Void) {
     NetworkManager.performAPIRequestJSON(.get, urlSuffix: "/apartments", params: ["excluded_ids": excludedIds, "filters": filters], completion: { (json, error, res) in
       if error != nil || json == nil {
         return completion(0, error)

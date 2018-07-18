@@ -8,7 +8,7 @@ module Api::V1
         render json:{permissions: "none"}
       end
 
-      users = User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => (params[:excluded_ids] || []))
+      users = User.all.where(:role => [User::Role::CLIENT, User::Role::REALTOR]).where.not(:id => (params[:excluded_ids] || [])).limit(20)
 
       render json: {data: users, permissions: "crud"}
     end
